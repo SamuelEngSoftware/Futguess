@@ -25,11 +25,12 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     val context = LocalContext.current
-
                     val db = AppDatabase.getDatabase(context)
-                    val dao = db.usuarioDao()
 
-                    GrafoNavegacao(dao = dao)
+                    val usuarioDao = db.usuarioDao()
+                    val partidaDao = db.partidaDao()
+
+                    GrafoNavegacao(usuarioDao = usuarioDao, partidaDao = partidaDao)
                 }
             }
         }

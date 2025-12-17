@@ -7,13 +7,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.com.fsamuel.futguess.data.PartidaDao
 import br.com.fsamuel.futguess.data.UsuarioDao
 import br.com.fsamuel.futguess.ui.auth.cadastro.CadastroViewModel
 import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.cadastro.TelaCadastro
 import br.com.fsamuel.futguess.ui.auth.login.TelaLogin
+import br.com.fsamuel.futguess.ui.game.JogoScreen
+import br.com.fsamuel.futguess.ui.game.JogoViewModel
+import br.com.fsamuel.futguess.ui.history.HistoryScreen
+import br.com.fsamuel.futguess.ui.history.HistoryViewModel
+
 @Composable
-fun GrafoNavegacao(dao: UsuarioDao) {
+fun GrafoNavegacao(usuarioDao: UsuarioDao, partidaDao: PartidaDao) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Rotas.LOGIN) {
@@ -22,7 +28,7 @@ fun GrafoNavegacao(dao: UsuarioDao) {
             val loginViewModel: LoginViewModel = viewModel(
                 factory = object : ViewModelProvider.Factory {
                     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return LoginViewModel(dao) as T
+                        return LoginViewModel(usuarioDao) as T
                     }
                 }
             )
@@ -42,7 +48,7 @@ fun GrafoNavegacao(dao: UsuarioDao) {
             val cadastroViewModel: CadastroViewModel = viewModel(
                 factory = object : ViewModelProvider.Factory {
                     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return CadastroViewModel(dao) as T
+                        return CadastroViewModel(usuarioDao) as T
                     }
                 }
             )
@@ -54,12 +60,23 @@ fun GrafoNavegacao(dao: UsuarioDao) {
         }
 
         composable(Rotas.HOME) {
-            br.com.fsamuel.futguess.ui.game.JogoScreen(navController = navController)
+            val jogoViewModel: JogoViewModel = viewModel(
+                factory = JogoViewModel.Factory(partidaDao)
+            )
+            JogoScreen(navController = navController, viewModel = jogoViewModel)
         }
 
         composable(Rotas.HISTORY) {
-            androidx.compose.material3.Text("Tela de Histórico (Em construção)")
+            val historyViewModel: HistoryViewModel = viewModel(
+                factory = HistoryViewModel.Factory(partidaDao)
+            )
+            HistoryScreen(navController = navController, viewModel = historyViewModel)
         }
+
+        composable(Rotas.PROFILE) {
+            androidx.compose.material3.Text("Tela de Perfil (Em construção)")
+        }
+
 
         composable(Rotas.PROFILE) {
             androidx.compose.material3.Text("Tela de Perfil (Em construção)")
