@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,7 +68,8 @@ fun JogoScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -107,11 +110,17 @@ fun JogoScreen(
                             else -> ""
                         }
 
+                        val estadosLinha = if (i < viewModel.tentativas.size && alvo != null) {
+                            viewModel.calcularEstados(palavra, alvo.nome)
+                        } else {
+                            emptyList()
+                        }
+
                         for (j in 0 until tamanhoPalavra) {
                             val letra = palavra.getOrNull(j)
 
                             val corFundo = if (i < viewModel.tentativas.size && alvo != null && letra != null) {
-                                when (viewModel.verificarCor(letra, j, alvo.nome)) {
+                                when (estadosLinha.getOrNull(j)) {
                                     EstadoLetra.CERTA -> CorCerta
                                     EstadoLetra.LUGAR_ERRADO -> CorLugarErrado
                                     EstadoLetra.NAO_EXISTE -> CorNaoExiste
@@ -127,7 +136,8 @@ fun JogoScreen(
                                 modifier = Modifier
                                     .size(tamanhoBox)
                                     .background(corFundo, RoundedCornerShape(4.dp))
-                                    .border(BorderStroke(2.dp, if(letra != null) Color.Gray else Color.DarkGray), RoundedCornerShape(4.dp)),
+                                    .border(BorderStroke(2.dp, if(letra != null) Color.Gray else Color.DarkGray),
+                                        RoundedCornerShape(4.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
