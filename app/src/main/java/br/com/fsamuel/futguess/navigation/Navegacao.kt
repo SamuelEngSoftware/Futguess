@@ -53,9 +53,16 @@ fun GrafoNavegacao(dao: UsuarioDao) {
             )
         }
 
-        // TELA HOME PROVISÓRIA
         composable(Rotas.HOME) {
-            androidx.compose.material3.Text("BEM VINDO AO FUTGUESS! (Em construção)")
+            br.com.fsamuel.futguess.ui.game.JogoScreen(navController = navController)
+        }
+
+        composable(Rotas.HISTORY) {
+            androidx.compose.material3.Text("Tela de Histórico (Em construção)")
+        }
+
+        composable(Rotas.PROFILE) {
+            androidx.compose.material3.Text("Tela de Perfil (Em construção)")
         }
     }
 }
