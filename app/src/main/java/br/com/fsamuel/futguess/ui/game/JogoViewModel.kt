@@ -3,7 +3,10 @@ package br.com.fsamuel.futguess.ui.game
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import br.com.fsamuel.futguess.data.Partida
+import br.com.fsamuel.futguess.data.PartidaDao
 import br.com.fsamuel.futguess.data.remote.Jogador
 import br.com.fsamuel.futguess.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
@@ -11,7 +14,7 @@ import kotlinx.coroutines.launch
 enum class EstadoLetra { CERTA, LUGAR_ERRADO, NAO_EXISTE}
 enum class StatusJogo { JOGANDO, VITORIA, DERROTA }
 
-class JogoViewModel : ViewModel() {
+class JogoViewModel(private val dao: PartidaDao) : ViewModel() {
 
     var jogadorAlvo = mutableStateOf<Jogador?>(null)
     var tentativas = mutableStateListOf<String>()
@@ -76,16 +79,56 @@ class JogoViewModel : ViewModel() {
 
         if (chute == alvo) {
             statusJogo.value = StatusJogo.VITORIA
+            salvarPartida(alvo, true, tentativas.size)
         } else if (tentativas.size >= 6) {
             statusJogo.value = StatusJogo.DERROTA
+            salvarPartida(alvo, false, 6)
         }
     }
 
-    fun verificarCor(letra: Char, index: Int, palavraCorreta: String): EstadoLetra {
-        return when {
-            palavraCorreta[index] == letra -> EstadoLetra.CERTA
-            palavraCorreta.contains(letra) -> EstadoLetra.LUGAR_ERRADO
-            else -> EstadoLetra.NAO_EXISTE
+    private fun salvarPartida(nomeJogador: String, ganhou: Boolean, tentativasUsadas: Int) {
+        viewModelScope.launch {
+            val novaPartida = Partida(
+                jogadorSorteado = nomeJogador,
+                ganhou = ganhou,
+                tentativasUsadas = tentativasUsadas
+            )
+            dao.salvarPartida(novaPartida)
         }
     }
+
+    class Factory(private val dao: PartidaDao) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return JogoViewModel(dao) as T
+        }
+    }
+
+    fun calcularEstados(tentativa: String, alvo: String): List<EstadoLetra> {
+        val estados = MutableList(tentativa.length) { EstadoLetra.NAO_EXISTE }
+        val mapaFrequencia = mutableMapOf<Char, Int>()
+
+        alvo.forEach { letra ->
+            mapaFrequencia[letra] = (mapaFrequencia[letra] ?: 0) + 1
+        }
+
+        for (i in tentativa.indices) {
+            if (i < alvo.length && tentativa[i] == alvo[i]) {
+                estados[i] = EstadoLetra.CERTA
+                mapaFrequencia[tentativa[i]] = mapaFrequencia[tentativa[i]]!! - 1
+            }
+        }
+
+        for (i in tentativa.indices) {
+            if (estados[i] != EstadoLetra.CERTA) {
+                val letra = tentativa[i]
+                if (mapaFrequencia.getOrDefault(letra, 0) > 0) {
+                    estados[i] = EstadoLetra.LUGAR_ERRADO
+                    mapaFrequencia[letra] = mapaFrequencia[letra]!! - 1
+                }
+            }
+        }
+        return estados
+    }
+
 }

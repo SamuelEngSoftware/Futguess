@@ -10,7 +10,7 @@ interface FutebolApi {
 }
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.100.14:3000/"
+     private const val BASE_URL = "http://192.168.0.10:3000/"
 
     val api: FutebolApi by lazy {
         Retrofit.Builder()
