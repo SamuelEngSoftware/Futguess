@@ -17,6 +17,8 @@ import br.com.fsamuel.futguess.ui.game.JogoScreen
 import br.com.fsamuel.futguess.ui.game.JogoViewModel
 import br.com.fsamuel.futguess.ui.history.HistoryScreen
 import br.com.fsamuel.futguess.ui.history.HistoryViewModel
+import br.com.fsamuel.futguess.ui.profile.ProfileScreen
+import br.com.fsamuel.futguess.ui.profile.ProfileViewModel
 
 @Composable
 fun GrafoNavegacao(usuarioDao: UsuarioDao, partidaDao: PartidaDao) {
@@ -74,12 +76,11 @@ fun GrafoNavegacao(usuarioDao: UsuarioDao, partidaDao: PartidaDao) {
         }
 
         composable(Rotas.PROFILE) {
-            androidx.compose.material3.Text("Tela de Perfil (Em construção)")
+            val profileViewModel: ProfileViewModel = viewModel(
+                factory = ProfileViewModel.Factory(usuarioDao)
+            )
+            ProfileScreen(navController = navController, viewModel = profileViewModel)
         }
 
-
-        composable(Rotas.PROFILE) {
-            androidx.compose.material3.Text("Tela de Perfil (Em construção)")
-        }
     }
 }
