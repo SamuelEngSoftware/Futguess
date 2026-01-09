@@ -1,17 +1,12 @@
 package br.com.fsamuel.futguess.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.com.fsamuel.futguess.data.PartidaDao
-import br.com.fsamuel.futguess.data.UsuarioDao
 import br.com.fsamuel.futguess.ui.auth.cadastro.CadastroViewModel
-import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.cadastro.TelaCadastro
+import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.login.TelaLogin
 import br.com.fsamuel.futguess.ui.game.JogoScreen
 import br.com.fsamuel.futguess.ui.game.JogoViewModel
@@ -19,21 +14,16 @@ import br.com.fsamuel.futguess.ui.history.HistoryScreen
 import br.com.fsamuel.futguess.ui.history.HistoryViewModel
 import br.com.fsamuel.futguess.ui.profile.ProfileScreen
 import br.com.fsamuel.futguess.ui.profile.ProfileViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun GrafoNavegacao(usuarioDao: UsuarioDao, partidaDao: PartidaDao) {
+fun GrafoNavegacao() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Rotas.LOGIN) {
 
         composable(Rotas.LOGIN) {
-            val loginViewModel: LoginViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return LoginViewModel(usuarioDao) as T
-                    }
-                }
-            )
+            val loginViewModel: LoginViewModel = koinViewModel()
 
             TelaLogin(
                 viewModel = loginViewModel,
@@ -47,13 +37,7 @@ fun GrafoNavegacao(usuarioDao: UsuarioDao, partidaDao: PartidaDao) {
         }
 
         composable(Rotas.CADASTRO) {
-            val cadastroViewModel: CadastroViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return CadastroViewModel(usuarioDao) as T
-                    }
-                }
-            )
+            val cadastroViewModel: CadastroViewModel = koinViewModel()
 
             TelaCadastro(
                 viewModel = cadastroViewModel,
@@ -62,23 +46,17 @@ fun GrafoNavegacao(usuarioDao: UsuarioDao, partidaDao: PartidaDao) {
         }
 
         composable(Rotas.HOME) {
-            val jogoViewModel: JogoViewModel = viewModel(
-                factory = JogoViewModel.Factory(partidaDao)
-            )
+            val jogoViewModel: JogoViewModel = koinViewModel()
             JogoScreen(navController = navController, viewModel = jogoViewModel)
         }
 
         composable(Rotas.HISTORY) {
-            val historyViewModel: HistoryViewModel = viewModel(
-                factory = HistoryViewModel.Factory(partidaDao)
-            )
+            val historyViewModel: HistoryViewModel = koinViewModel()
             HistoryScreen(navController = navController, viewModel = historyViewModel)
         }
 
         composable(Rotas.PROFILE) {
-            val profileViewModel: ProfileViewModel = viewModel(
-                factory = ProfileViewModel.Factory(usuarioDao)
-            )
+            val profileViewModel: ProfileViewModel = koinViewModel()
             ProfileScreen(navController = navController, viewModel = profileViewModel)
         }
 

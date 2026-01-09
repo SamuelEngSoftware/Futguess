@@ -3,6 +3,7 @@ package br.com.fsamuel.futguess.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 @Composable
 fun FutGuessTopBar(
+    moedas: Int = 0,
     onSettingsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
@@ -29,12 +31,11 @@ fun FutGuessTopBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onSettingsClick) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Configurações",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.MonetizationOn, contentDescription = null,
+                    tint = Color(0xFFFFD700))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "$moedas", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
             }
 
             Text(

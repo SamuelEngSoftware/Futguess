@@ -1,21 +1,17 @@
 package br.com.fsamuel.futguess.ui.history
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import br.com.fsamuel.futguess.data.Partida
 import br.com.fsamuel.futguess.data.PartidaDao
+import br.com.fsamuel.futguess.data.UserSession
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class HistoryViewModel(private val dao: PartidaDao) : ViewModel() {
-
-    val historico: Flow<List<Partida>> = dao.listarPartidas()
-
-    class Factory(private val dao: PartidaDao) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
-                return HistoryViewModel(dao) as T
-            }
-            throw IllegalArgumentException("Classe ViewModel desconhecida")
-        }
+    val usuarioId = UserSession.usuarioLogado?.id ?: -1
+    val historico: Flow<List<Partida>> = if (usuarioId != -1) {
+        dao.listarPartidas(usuarioId)
+    } else {
+        flowOf(emptyList())
     }
 }

@@ -3,7 +3,6 @@ package br.com.fsamuel.futguess.ui.profile
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.UserSession
 import br.com.fsamuel.futguess.data.UsuarioDao
@@ -42,13 +41,6 @@ class ProfileViewModel(private val dao: UsuarioDao) : ViewModel() {
             dao.salvarUsuario(usuarioAtualizado)
             UserSession.usuarioLogado = usuarioAtualizado
             mensagemSucesso.value = true
-        }
-    }
-
-    class Factory(private val dao: UsuarioDao) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ProfileViewModel(dao) as T
         }
     }
 }
