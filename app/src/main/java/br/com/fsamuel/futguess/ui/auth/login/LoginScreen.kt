@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import br.com.fsamuel.futguess.navigation.Rotas
 import br.com.fsamuel.futguess.ui.theme.*
 import br.com.fsamuel.futguess.ui.components.CampoTexto
 
@@ -25,7 +27,9 @@ import br.com.fsamuel.futguess.ui.components.CampoTexto
 fun TelaLogin(
     viewModel: LoginViewModel,
     navegarParaCadastro: () -> Unit,
-    navegarParaHome: () -> Unit
+    navegarParaHome: () -> Unit,
+    navegarParaEsqueceuSenha: () -> Unit
+
 ) {
     Column(
         modifier = Modifier
@@ -70,6 +74,12 @@ fun TelaLogin(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(text = "ENTRAR", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        TextButton(onClick =  navegarParaEsqueceuSenha) {
+            Text("Esqueceu a senha?", color = Color.Gray)
         }
 
         Spacer(modifier = Modifier.height(24.dp))

@@ -7,6 +7,7 @@ import br.com.fsamuel.futguess.data.AppDatabase
 import br.com.fsamuel.futguess.data.remote.RetrofitClient
 import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.cadastro.CadastroViewModel
+import br.com.fsamuel.futguess.ui.auth.esqueceusenha.EsqueceuSenhaViewModel
 import br.com.fsamuel.futguess.ui.game.JogoViewModel
 import br.com.fsamuel.futguess.ui.history.HistoryViewModel
 import br.com.fsamuel.futguess.ui.profile.ProfileViewModel
@@ -25,6 +26,5 @@ val appModule = module {
     viewModel { JogoViewModel(get(), get()) }
     viewModel { HistoryViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
-
-
+    viewModel { EsqueceuSenhaViewModel(get()) }
 }

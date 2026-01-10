@@ -15,6 +15,8 @@ import br.com.fsamuel.futguess.ui.history.HistoryViewModel
 import br.com.fsamuel.futguess.ui.profile.ProfileScreen
 import br.com.fsamuel.futguess.ui.profile.ProfileViewModel
 import org.koin.androidx.compose.koinViewModel
+import br.com.fsamuel.futguess.ui.auth.esqueceusenha.EsqueceuSenhaScreen
+import  br.com.fsamuel.futguess.ui.auth.esqueceusenha.EsqueceuSenhaViewModel
 
 @Composable
 fun GrafoNavegacao() {
@@ -32,7 +34,8 @@ fun GrafoNavegacao() {
                     navController.navigate(Rotas.HOME) {
                         popUpTo(Rotas.LOGIN) { inclusive = true }
                     }
-                }
+                },
+                navegarParaEsqueceuSenha = { navController.navigate(Rotas.ESQUECEU_SENHA) }
             )
         }
 
@@ -59,6 +62,15 @@ fun GrafoNavegacao() {
             val profileViewModel: ProfileViewModel = koinViewModel()
             ProfileScreen(navController = navController, viewModel = profileViewModel)
         }
+
+        composable(route = Rotas.ESQUECEU_SENHA){
+            val esqueceuSenhaViewModel: EsqueceuSenhaViewModel = koinViewModel()
+            EsqueceuSenhaScreen(
+                onNavigateBack = { navController.popBackStack()},
+                viewModel = esqueceuSenhaViewModel
+            )
+        }
+
 
     }
 }
