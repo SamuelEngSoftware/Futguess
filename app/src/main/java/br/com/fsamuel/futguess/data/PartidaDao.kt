@@ -10,6 +10,6 @@ interface PartidaDao {
     @Insert
     suspend fun salvarPartida(partida: Partida)
 
-    @Query("SELECT * FROM tabela_partidas ORDER BY dataHora DESC")
-    fun listarPartidas(): Flow<List<Partida>>
+    @Query("SELECT * FROM tabela_partidas WHERE usuarioId = :userId ORDER BY dataHora DESC")
+    fun listarPartidas(userId: Int): Flow<List<Partida>>
 }

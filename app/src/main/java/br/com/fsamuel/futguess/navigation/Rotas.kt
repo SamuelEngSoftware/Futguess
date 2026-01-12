@@ -6,4 +6,6 @@ object Rotas {
     const val HOME = "home"
     const val HISTORY = "history"
     const val PROFILE = "profile"
+
+    const val ESQUECEU_SENHA = "esqueceu_senha"
 }

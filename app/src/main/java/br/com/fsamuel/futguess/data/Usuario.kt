@@ -9,5 +9,6 @@ data class Usuario(
     val nome: String,
     val email: String,
     val senha: String,
-    val fotoUri: String? = null
+    val fotoUri: String? = null,
+    val moedas: Int = 0
 )

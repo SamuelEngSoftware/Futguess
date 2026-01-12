@@ -3,10 +3,11 @@ package br.com.fsamuel.futguess.ui.game
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.Partida
 import br.com.fsamuel.futguess.data.PartidaDao
+import br.com.fsamuel.futguess.data.UserSession
+import br.com.fsamuel.futguess.data.UsuarioDao
 import br.com.fsamuel.futguess.data.remote.Jogador
 import br.com.fsamuel.futguess.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
@@ -14,15 +15,21 @@ import kotlinx.coroutines.launch
 enum class EstadoLetra { CERTA, LUGAR_ERRADO, NAO_EXISTE}
 enum class StatusJogo { JOGANDO, VITORIA, DERROTA }
 
-class JogoViewModel(private val dao: PartidaDao) : ViewModel() {
+class JogoViewModel(
+    private val dao: PartidaDao,
+    private val usuarioDao: UsuarioDao
+) : ViewModel() {
 
     var jogadorAlvo = mutableStateOf<Jogador?>(null)
     var tentativas = mutableStateListOf<String>()
     var inputAtual = mutableStateOf("")
     var statusJogo = mutableStateOf(StatusJogo.JOGANDO)
     var mensagemErro = mutableStateOf<String?>(null)
+    var saldoMoedas = mutableStateOf(0)
+    var mostrarDica = mutableStateOf(false)
 
     init {
+        saldoMoedas.value = UserSession.usuarioLogado?.moedas ?: 0
         iniciarNovoJogo()
     }
 
@@ -30,6 +37,7 @@ class JogoViewModel(private val dao: PartidaDao) : ViewModel() {
         viewModelScope.launch {
             try {
                 mensagemErro.value = null
+                mostrarDica.value = false
 
                 val lista = RetrofitClient.api.buscarJogadores()
 
@@ -80,27 +88,34 @@ class JogoViewModel(private val dao: PartidaDao) : ViewModel() {
         if (chute == alvo) {
             statusJogo.value = StatusJogo.VITORIA
             salvarPartida(alvo, true, tentativas.size)
+            adicionarMoedas(10) // Se tu achar muitas moedas pode alterar aqui @Samuel
         } else if (tentativas.size >= 6) {
             statusJogo.value = StatusJogo.DERROTA
             salvarPartida(alvo, false, 6)
         }
     }
 
+    private fun adicionarMoedas(quantidade: Int) {
+        val userAtual = UserSession.usuarioLogado ?: return
+
+        viewModelScope.launch {
+            val userAtualizado = userAtual.copy(moedas = userAtual.moedas + quantidade)
+            usuarioDao.salvarUsuario(userAtualizado)
+            UserSession.usuarioLogado = userAtualizado
+            saldoMoedas.value = userAtualizado.moedas
+        }
+    }
+
     private fun salvarPartida(nomeJogador: String, ganhou: Boolean, tentativasUsadas: Int) {
+        val usuarioLogado = UserSession.usuarioLogado ?: return
         viewModelScope.launch {
             val novaPartida = Partida(
+                usuarioId = usuarioLogado.id,
                 jogadorSorteado = nomeJogador,
                 ganhou = ganhou,
                 tentativasUsadas = tentativasUsadas
             )
             dao.salvarPartida(novaPartida)
-        }
-    }
-
-    class Factory(private val dao: PartidaDao) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return JogoViewModel(dao) as T
         }
     }
 
