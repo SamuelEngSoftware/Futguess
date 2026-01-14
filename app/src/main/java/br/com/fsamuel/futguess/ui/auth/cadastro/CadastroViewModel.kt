@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.Usuario
-import br.com.fsamuel.futguess.data.UsuarioDao
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import br.com.fsamuel.futguess.utils.SecurityUtil
 import br.com.fsamuel.futguess.utils.ValidationUtil
 import kotlinx.coroutines.launch
 
-class CadastroViewModel(private val dao: UsuarioDao) : ViewModel() {
+class CadastroViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
 
     var nome = mutableStateOf("")
     var email = mutableStateOf("")
@@ -46,7 +46,7 @@ class CadastroViewModel(private val dao: UsuarioDao) : ViewModel() {
                     senha = novaSenhaHash // Salva o Hash
                 )
 
-                dao.salvarUsuario(novoUsuario)
+                usuarioRepository.salvarUsuario(novoUsuario)
                 aoFinalizar()
 
             } catch (e: SQLiteConstraintException) {

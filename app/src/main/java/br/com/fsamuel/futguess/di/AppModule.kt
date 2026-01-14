@@ -5,6 +5,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import br.com.fsamuel.futguess.data.AppDatabase
 import br.com.fsamuel.futguess.data.remote.RetrofitClient
+import br.com.fsamuel.futguess.data.repository.JogoRepository
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.cadastro.CadastroViewModel
 import br.com.fsamuel.futguess.ui.auth.esqueceusenha.EsqueceuSenhaViewModel
@@ -20,6 +22,9 @@ val appModule = module {
     single { get<AppDatabase>().partidaDao() }
 
     single { RetrofitClient.api }
+
+    single { UsuarioRepository(get()) }
+    single { JogoRepository(get(), get()) }
 
     viewModel { LoginViewModel(get()) }
     viewModel { CadastroViewModel(get()) }

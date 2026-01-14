@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.UserSession
-import br.com.fsamuel.futguess.data.UsuarioDao
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val dao: UsuarioDao) : ViewModel() {
+class ProfileViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
 
     var nome = mutableStateOf("")
     var email = mutableStateOf("")
@@ -42,7 +42,7 @@ class ProfileViewModel(private val dao: UsuarioDao) : ViewModel() {
                 nome = nome.value,
                 fotoUri = fotoUri.value?.toString()
             )
-            dao.atualizarUsuario(usuarioAtualizado)
+            usuarioRepository.atualizarUsuario(usuarioAtualizado)
             UserSession.usuarioLogado = usuarioAtualizado
             mensagemSucesso.value = true
         }

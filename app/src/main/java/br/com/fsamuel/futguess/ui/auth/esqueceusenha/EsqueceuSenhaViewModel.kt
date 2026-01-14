@@ -3,12 +3,12 @@ package br.com.fsamuel.futguess.ui.auth.esqueceusenha
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.fsamuel.futguess.data.UsuarioDao
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 import br.com.fsamuel.futguess.utils.SecurityUtil
 import br.com.fsamuel.futguess.utils.ValidationUtil
 
-class EsqueceuSenhaViewModel(private val dao: UsuarioDao) : ViewModel() {
+class EsqueceuSenhaViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
 
     var email = mutableStateOf("")
     var novaSenha = mutableStateOf("")
@@ -38,10 +38,10 @@ class EsqueceuSenhaViewModel(private val dao: UsuarioDao) : ViewModel() {
         }
 
         viewModelScope.launch {
-            val usuario = dao.buscarPorEmail(email.value)
+            val usuario = usuarioRepository.buscarPorEmail(email.value)
             if (usuario != null) {
                 val novaSenhaHash = SecurityUtil.hashSenha(novaSenha.value)
-                dao.atualizarSenha(email.value, novaSenhaHash)
+                usuarioRepository.atualizarSenha(email.value, novaSenhaHash)
                 aoSucesso()
             } else {
                 mensagemErro.value = "E-mail não encontrado."

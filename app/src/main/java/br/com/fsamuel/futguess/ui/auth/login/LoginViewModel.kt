@@ -4,11 +4,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.UserSession
-import br.com.fsamuel.futguess.data.UsuarioDao
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import br.com.fsamuel.futguess.utils.SecurityUtil
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val dao: UsuarioDao) : ViewModel() {
+class LoginViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
 
     var email = mutableStateOf("")
     var senha = mutableStateOf("")
@@ -22,7 +22,7 @@ class LoginViewModel(private val dao: UsuarioDao) : ViewModel() {
         }
 
         viewModelScope.launch {
-            val usuarioEncontrado = dao.buscarPorEmail(email.value)
+            val usuarioEncontrado = usuarioRepository.buscarPorEmail(email.value)
 
             if (usuarioEncontrado != null) {
                 val senhaConfere = SecurityUtil.verificarSenha(

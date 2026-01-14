@@ -5,19 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.Partida
-import br.com.fsamuel.futguess.data.PartidaDao
 import br.com.fsamuel.futguess.data.UserSession
-import br.com.fsamuel.futguess.data.UsuarioDao
 import br.com.fsamuel.futguess.data.remote.Jogador
-import br.com.fsamuel.futguess.data.remote.RetrofitClient
+import br.com.fsamuel.futguess.data.repository.JogoRepository
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 
 enum class EstadoLetra { CERTA, LUGAR_ERRADO, NAO_EXISTE}
 enum class StatusJogo { JOGANDO, VITORIA, DERROTA }
 
 class JogoViewModel(
-    private val dao: PartidaDao,
-    private val usuarioDao: UsuarioDao
+    private val jogoRepository: JogoRepository,
+    private val usuarioRepository: UsuarioRepository
 ) : ViewModel() {
 
     var jogadorAlvo = mutableStateOf<Jogador?>(null)
@@ -39,7 +38,7 @@ class JogoViewModel(
                 mensagemErro.value = null
                 mostrarDica.value = false
 
-                val lista = RetrofitClient.api.buscarJogadores()
+                val lista = jogoRepository.buscarJogadoresApi()
 
                 if (lista.isNotEmpty()) {
                     val sorteado = lista.random()
@@ -100,7 +99,7 @@ class JogoViewModel(
 
         viewModelScope.launch {
             val userAtualizado = userAtual.copy(moedas = userAtual.moedas + quantidade)
-            usuarioDao.atualizarMoeda(userAtualizado)
+            usuarioRepository.atualizarMoedas(userAtualizado)
             UserSession.usuarioLogado = userAtualizado
             saldoMoedas.value = userAtualizado.moedas
         }
@@ -115,7 +114,7 @@ class JogoViewModel(
                 ganhou = ganhou,
                 tentativasUsadas = tentativasUsadas
             )
-            dao.salvarPartida(novaPartida)
+            jogoRepository.salvarPartida(novaPartida)
         }
     }
 
