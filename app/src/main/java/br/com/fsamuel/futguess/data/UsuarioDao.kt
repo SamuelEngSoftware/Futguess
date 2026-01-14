@@ -11,6 +11,8 @@ interface UsuarioDao {
     @Insert
     suspend fun salvarUsuario(usuario: Usuario)
     @Update
+    suspend fun atualizarUsuario(usuario: Usuario)
+    @Update
     suspend fun atualizarMoeda(usuario: Usuario)
     @Query("SELECT * FROM tabela_usuarios WHERE email = :email LIMIT 1")
     suspend fun buscarPorEmail(email: String): Usuario?

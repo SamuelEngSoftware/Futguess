@@ -38,7 +38,7 @@ class ProfileViewModel(private val dao: UsuarioDao) : ViewModel() {
                 nome = nome.value,
                 fotoUri = fotoUri.value?.toString()
             )
-            dao.salvarUsuario(usuarioAtualizado)
+            dao.atualizarUsuario(usuarioAtualizado)
             UserSession.usuarioLogado = usuarioAtualizado
             mensagemSucesso.value = true
         }
