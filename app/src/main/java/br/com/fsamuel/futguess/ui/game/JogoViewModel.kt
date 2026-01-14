@@ -100,7 +100,7 @@ class JogoViewModel(
 
         viewModelScope.launch {
             val userAtualizado = userAtual.copy(moedas = userAtual.moedas + quantidade)
-            usuarioDao.salvarUsuario(userAtualizado)
+            usuarioDao.atualizarMoeda(userAtualizado)
             UserSession.usuarioLogado = userAtualizado
             saldoMoedas.value = userAtualizado.moedas
         }

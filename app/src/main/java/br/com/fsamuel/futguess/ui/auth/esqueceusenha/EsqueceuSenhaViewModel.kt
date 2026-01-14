@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.fsamuel.futguess.data.UsuarioDao
 import kotlinx.coroutines.launch
+import br.com.fsamuel.futguess.utils.SecurityUtil
 
 class EsqueceuSenhaViewModel(private val dao: UsuarioDao) : ViewModel() {
 
@@ -26,6 +27,7 @@ class EsqueceuSenhaViewModel(private val dao: UsuarioDao) : ViewModel() {
             try {
                 val usuario = dao.buscarPorEmail(email.value)
                 if (usuario != null) {
+                    val novaSenhaHash = SecurityUtil.hashSenha(novaSenha.value)
                     dao.atualizarSenha(email.value, novaSenha.value)
                     aoSucesso()
                 } else {
