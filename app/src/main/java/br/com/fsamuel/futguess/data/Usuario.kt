@@ -8,5 +8,7 @@ data class Usuario(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nome: String,
     val email: String,
-    val senha: String
+    val senha: String,
+    val fotoUri: String? = null,
+    val moedas: Int = 0
 )

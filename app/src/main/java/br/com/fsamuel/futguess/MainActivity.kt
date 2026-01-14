@@ -15,21 +15,10 @@ import br.com.fsamuel.futguess.ui.theme.FutguessTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // enableEdgeToEdge()  Removi por enquanto pra não ficar atrás da barra de status
-
         setContent {
             FutguessTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-
-                    val context = LocalContext.current
-
-                    val db = AppDatabase.getDatabase(context)
-                    val dao = db.usuarioDao()
-
-                    GrafoNavegacao(dao = dao)
+                Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    GrafoNavegacao()
                 }
             }
         }

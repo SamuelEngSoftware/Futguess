@@ -1,31 +1,31 @@
 package br.com.fsamuel.futguess.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.com.fsamuel.futguess.data.UsuarioDao
 import br.com.fsamuel.futguess.ui.auth.cadastro.CadastroViewModel
-import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.cadastro.TelaCadastro
+import br.com.fsamuel.futguess.ui.auth.login.LoginViewModel
 import br.com.fsamuel.futguess.ui.auth.login.TelaLogin
+import br.com.fsamuel.futguess.ui.game.JogoScreen
+import br.com.fsamuel.futguess.ui.game.JogoViewModel
+import br.com.fsamuel.futguess.ui.history.HistoryScreen
+import br.com.fsamuel.futguess.ui.history.HistoryViewModel
+import br.com.fsamuel.futguess.ui.profile.ProfileScreen
+import br.com.fsamuel.futguess.ui.profile.ProfileViewModel
+import org.koin.androidx.compose.koinViewModel
+import br.com.fsamuel.futguess.ui.auth.esqueceusenha.EsqueceuSenhaScreen
+import  br.com.fsamuel.futguess.ui.auth.esqueceusenha.EsqueceuSenhaViewModel
+
 @Composable
-fun GrafoNavegacao(dao: UsuarioDao) {
+fun GrafoNavegacao() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Rotas.LOGIN) {
 
         composable(Rotas.LOGIN) {
-            val loginViewModel: LoginViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return LoginViewModel(dao) as T
-                    }
-                }
-            )
+            val loginViewModel: LoginViewModel = koinViewModel()
 
             TelaLogin(
                 viewModel = loginViewModel,
@@ -34,18 +34,13 @@ fun GrafoNavegacao(dao: UsuarioDao) {
                     navController.navigate(Rotas.HOME) {
                         popUpTo(Rotas.LOGIN) { inclusive = true }
                     }
-                }
+                },
+                navegarParaEsqueceuSenha = { navController.navigate(Rotas.ESQUECEU_SENHA) }
             )
         }
 
         composable(Rotas.CADASTRO) {
-            val cadastroViewModel: CadastroViewModel = viewModel(
-                factory = object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return CadastroViewModel(dao) as T
-                    }
-                }
-            )
+            val cadastroViewModel: CadastroViewModel = koinViewModel()
 
             TelaCadastro(
                 viewModel = cadastroViewModel,
@@ -53,9 +48,29 @@ fun GrafoNavegacao(dao: UsuarioDao) {
             )
         }
 
-        // TELA HOME PROVISÓRIA
         composable(Rotas.HOME) {
-            androidx.compose.material3.Text("BEM VINDO AO FUTGUESS! (Em construção)")
+            val jogoViewModel: JogoViewModel = koinViewModel()
+            JogoScreen(navController = navController, viewModel = jogoViewModel)
         }
+
+        composable(Rotas.HISTORY) {
+            val historyViewModel: HistoryViewModel = koinViewModel()
+            HistoryScreen(navController = navController, viewModel = historyViewModel)
+        }
+
+        composable(Rotas.PROFILE) {
+            val profileViewModel: ProfileViewModel = koinViewModel()
+            ProfileScreen(navController = navController, viewModel = profileViewModel)
+        }
+
+        composable(route = Rotas.ESQUECEU_SENHA){
+            val esqueceuSenhaViewModel: EsqueceuSenhaViewModel = koinViewModel()
+            EsqueceuSenhaScreen(
+                onNavigateBack = { navController.popBackStack()},
+                viewModel = esqueceuSenhaViewModel
+            )
+        }
+
+
     }
 }
