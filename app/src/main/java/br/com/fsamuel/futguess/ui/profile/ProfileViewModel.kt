@@ -33,6 +33,10 @@ class ProfileViewModel(private val dao: UsuarioDao) : ViewModel() {
     fun salvarPerfil() {
         val usuarioAtual = UserSession.usuarioLogado ?: return
 
+        if(nome.value.isBlank()){
+            return
+        }
+
         viewModelScope.launch {
             val usuarioAtualizado = usuarioAtual.copy(
                 nome = nome.value,

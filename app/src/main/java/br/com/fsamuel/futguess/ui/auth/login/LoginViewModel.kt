@@ -15,8 +15,15 @@ class LoginViewModel(private val dao: UsuarioDao) : ViewModel() {
     var erroLogin = mutableStateOf(false)
 
     fun fazerLogin(aoLogar: () -> Unit) {
+
+        if (email.value.isBlank() || senha.value.isBlank()) {
+            erroLogin.value = true
+            return
+        }
+
         viewModelScope.launch {
             val usuarioEncontrado = dao.buscarPorEmail(email.value)
+
             if (usuarioEncontrado != null) {
                 val senhaConfere = SecurityUtil.verificarSenha(
                     senhaDigitada = senha.value,
