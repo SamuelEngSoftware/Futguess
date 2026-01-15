@@ -1,5 +1,7 @@
 package br.com.fsamuel.futguess.ui.game
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -146,12 +148,18 @@ fun JogoScreen(
                                 if (letra != null) CorNaoExiste.copy(alpha = 0.5f) else Color.Transparent
                             }
 
+                            val corAnimada by animateColorAsState(
+                                targetValue = corFundo,
+                                animationSpec = tween(durationMillis = 500),
+                                label = "animacaoCor"
+                            )
+
                             if (j > 0) Spacer(modifier = Modifier.width(espacoEntreBlocos))
 
                             Box(
                                 modifier = Modifier
                                     .size(tamanhoBox)
-                                    .background(corFundo, RoundedCornerShape(4.dp))
+                                    .background(corAnimada, RoundedCornerShape(4.dp))
                                     .border(BorderStroke(2.dp, if(letra != null) Color.Gray else Color.DarkGray),
                                         RoundedCornerShape(4.dp)),
                                 contentAlignment = Alignment.Center

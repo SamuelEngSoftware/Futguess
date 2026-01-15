@@ -3,36 +3,48 @@ package br.com.fsamuel.futguess.ui.auth.esqueceusenha
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.fsamuel.futguess.data.UsuarioDao
+import br.com.fsamuel.futguess.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
+import br.com.fsamuel.futguess.utils.SecurityUtil
+import br.com.fsamuel.futguess.utils.ValidationUtil
 
-class EsqueceuSenhaViewModel(private val dao: UsuarioDao) : ViewModel() {
+class EsqueceuSenhaViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
 
     var email = mutableStateOf("")
     var novaSenha = mutableStateOf("")
     var confirmarSenha = mutableStateOf("")
     var mensagemErro = mutableStateOf<String?>(null)
     fun redefinirSenha(aoSucesso: () -> Unit) {
-        if (email.value.isEmpty() || novaSenha.value.isEmpty() || confirmarSenha.value.isEmpty()) {
+        mensagemErro.value = null
+
+        if (email.value.isBlank() || novaSenha.value.isBlank() || confirmarSenha.value.isBlank()) {
             mensagemErro.value = "Preencha todos os campos."
             return
         }
+
+        if (!ValidationUtil.isEmailValido(email.value)) {
+            mensagemErro.value = "E-mail inválido."
+            return
+        }
+
+        if (!ValidationUtil.isSenhaValida(novaSenha.value)) {
+            mensagemErro.value = "A nova senha deve ter pelo menos 6 caracteres."
+            return
+        }
+
         if (novaSenha.value != confirmarSenha.value) {
             mensagemErro.value = "As senhas não coincidem."
             return
         }
 
         viewModelScope.launch {
-            try {
-                val usuario = dao.buscarPorEmail(email.value)
-                if (usuario != null) {
-                    dao.atualizarSenha(email.value, novaSenha.value)
-                    aoSucesso()
-                } else {
-                    mensagemErro.value = "E-mail não encontrado."
-                }
-            } catch (e: Exception) {
-                mensagemErro.value = "Erro: ${e.message}"
+            val usuario = usuarioRepository.buscarPorEmail(email.value)
+            if (usuario != null) {
+                val novaSenhaHash = SecurityUtil.hashSenha(novaSenha.value)
+                usuarioRepository.atualizarSenha(email.value, novaSenhaHash)
+                aoSucesso()
+            } else {
+                mensagemErro.value = "E-mail não encontrado."
             }
         }
     }

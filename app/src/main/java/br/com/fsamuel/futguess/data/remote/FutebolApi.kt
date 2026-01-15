@@ -10,7 +10,7 @@ interface FutebolApi {
 }
 
 object RetrofitClient {
-     private const val BASE_URL = "http://192.168.0.12:3000/"
+     private const val BASE_URL = "https://my-json-server.typicode.com/renansuaris/futguess-api/"
 
     val api: FutebolApi by lazy {
         Retrofit.Builder()

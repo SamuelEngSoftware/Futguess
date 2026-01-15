@@ -58,6 +58,15 @@ fun TelaCadastro(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (viewModel.mensagemErro.value != null) {
+            Text(
+                text = viewModel.mensagemErro.value!!,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+
         Button(
             onClick = { viewModel.criarConta { navegarParaLogin() } },
             modifier = Modifier.fillMaxWidth().height(50.dp),
