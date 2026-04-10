@@ -1,9 +1,5 @@
 # FutGuess
 
-## Equipe
-* Renan Alencar Soares 555524
-* Francisco Samuel Cabral Leitão 553382
-
 ## Descrição do Projeto
 O FutGuess é um aplicativo mobile inspirado no jogo Wordle, mas voltado pro tema de Futebol. O objetivo é adivinhar o nome de um jogador de futebol em até seis tentativas. A cada tentativa, é emitido um feedback, indicando se a letra está na posição correta (verde), na posição errada (laranja) ou não-pertencente (cinza).
 
